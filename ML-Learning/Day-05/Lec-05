@@ -1,0 +1,32 @@
+Batch Learning vs. Online Learning (Day 04) 🚀
+Note: These notes are compiled from the fourth lecture of the 100 Days of ML series by CampusX. They cover how machine learning models are trained and deployed in production environments, specifically focusing on Batch Learning (Offline Learning).
+
+1. What is "Production" in Machine Learning?
+In traditional software development, "production" simply means running your code on a server with an IP address so that your customers can access it over the internet.
+
+In Machine Learning, production is a bit different:
+
+You train your model.
+
+You deploy the trained model onto a server.
+
+The environment where the user interacts with the app is called the Client/User Environment, and the server running your ML model is called the Production Environment.
+
+Depending on how these models are trained, updated, and executed in production, we divide machine learning into two major approaches:
+
+Batch Learning (Offline Learning)
+
+Online Learning (Incremental Learning)
+
+2. What is Batch Learning (Offline Learning)?
+Batch Learning is the traditional and most common way of training a machine learning model.
+
+Definition: In this approach, you use your entire dataset all at once to train the model. There is no incremental training (meaning you don't train it in small pieces; you train it with the whole batch of data).
+
+How it works: 1. Data scientists collect data on their local/offline machines.
+2. The model is trained using this complete dataset.
+3. Once the model is tested and verified, the trained model is uploaded/deployed to the production server.
+4. The model stays static on the server and answers incoming user requests.
+
+[ Raw Data Collection ] ──> [ Train Model Offline ] ──> [ Test Model ] ──> [ Deploy to Server ]
+
