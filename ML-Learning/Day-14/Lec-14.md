@@ -1,4 +1,4 @@
-# Day 13: How to Frame a Machine Learning Problem (Project Planning) 🚀
+# Day 14: How to Frame a Machine Learning Problem (Project Planning) 🚀
 
 > **Context:** As a junior data scientist, you often get small, specific tasks (like cleaning data or training a specific model). But as you grow into leadership roles, your success depends on your ability to translate vague **Business Problems** into structured, solvable **Machine Learning Problems**.
 
