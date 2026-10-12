@@ -69,3 +69,6 @@ Real-world CSV files are often messy. Pandas provides built-in parameters to han
   ```python
   for chunk in pd.read_csv('huge_file.csv', chunksize=5000):
       print(chunk.shape)
+
+  4. Modern Industry Update (2027 Context)
+While CSV is standard for learning and small tasks, modern enterprise pipelines use Apache Parquet (.parquet) formats. Parquet files are compressed, store data types natively, and read up to 10x faster than CSV files.
