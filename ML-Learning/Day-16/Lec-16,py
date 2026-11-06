@@ -1,0 +1,426 @@
+```python
+# ============================================================
+# DAY 16 - WORKING WITH JSON AND SQL IN MACHINE LEARNING
+# ============================================================
+
+# Required installation:
+# python -m pip install pandas
+
+import json
+import sqlite3
+import pandas as pd
+
+
+# ============================================================
+# PART 1: WORKING WITH JSON
+# ============================================================
+
+print("\n========== PART 1: JSON ==========")
+
+# Creating Python dictionary
+
+student = {
+    "name": "Ayesha",
+    "age": 22,
+    "city": "Karachi",
+    "skills": ["Python", "SQL", "Machine Learning"],
+    "is_student": True
+}
+
+# Writing JSON file
+
+with open("student.json", "w", encoding="utf-8") as file:
+    json.dump(student, file, indent=4)
+
+print("JSON file created successfully!")
+
+
+# ============================================================
+# PART 2: READING JSON
+# ============================================================
+
+print("\n========== PART 2: READING JSON ==========")
+
+with open("student.json", "r", encoding="utf-8") as file:
+    data = json.load(file)
+
+print("Student Data:")
+print(data)
+
+print("Name:", data["name"])
+print("Age:", data["age"])
+print("Skills:", data["skills"])
+
+
+# ============================================================
+# PART 3: JSON STRING
+# ============================================================
+
+print("\n========== PART 3: JSON STRING ==========")
+
+json_string = '{"name": "Sara", "age": 21}'
+
+converted_data = json.loads(json_string)
+
+print(converted_data)
+print("Name:", converted_data["name"])
+
+
+# ============================================================
+# PART 4: JSON TO PANDAS DATAFRAME
+# ============================================================
+
+print("\n========== PART 4: PANDAS JSON ==========")
+
+students = [
+    {
+        "id": 1,
+        "name": "Ayesha",
+        "age": 22,
+        "city": "Karachi",
+        "marks": 88
+    },
+    {
+        "id": 2,
+        "name": "Sara",
+        "age": 21,
+        "city": "Lahore",
+        "marks": 76
+    },
+    {
+        "id": 3,
+        "name": "Hamza",
+        "age": 23,
+        "city": "Karachi",
+        "marks": 91
+    },
+    {
+        "id": 4,
+        "name": "Zain",
+        "age": 20,
+        "city": "Islamabad",
+        "marks": 69
+    },
+    {
+        "id": 5,
+        "name": "Mariam",
+        "age": 22,
+        "city": "Karachi",
+        "marks": 95
+    }
+]
+
+# Save records to JSON
+
+with open("students.json", "w", encoding="utf-8") as file:
+    json.dump(students, file, indent=4)
+
+# Read JSON using Pandas
+
+df = pd.read_json("students.json")
+
+print("\nComplete DataFrame:")
+print(df)
+
+print("\nFirst 5 Rows:")
+print(df.head())
+
+print("\nDataFrame Shape:")
+print(df.shape)
+
+print("\nColumn Names:")
+print(df.columns)
+
+print("\nDataFrame Information:")
+df.info()
+
+print("\nStatistical Summary:")
+print(df.describe())
+
+
+# ============================================================
+# PART 5: CREATE SQLITE DATABASE
+# ============================================================
+
+print("\n========== PART 5: SQLITE DATABASE ==========")
+
+# Connect to database
+# If database does not exist, SQLite creates it.
+
+connection = sqlite3.connect("day16_database.db")
+
+print("Database connected successfully!")
+
+
+# ============================================================
+# PART 6: CREATE SQL TABLE
+# ============================================================
+
+cursor = connection.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    age INTEGER,
+    city TEXT,
+    marks REAL
+)
+""")
+
+print("Students table created!")
+
+
+# ============================================================
+# PART 7: INSERT DATA INTO SQL TABLE
+# ============================================================
+
+# Clear old practice records so repeated runs do not duplicate them.
+
+cursor.execute("DELETE FROM students")
+
+student_records = [
+    (1, "Ayesha", 22, "Karachi", 88),
+    (2, "Sara", 21, "Lahore", 76),
+    (3, "Hamza", 23, "Karachi", 91),
+    (4, "Zain", 20, "Islamabad", 69),
+    (5, "Mariam", 22, "Karachi", 95)
+]
+
+cursor.executemany("""
+INSERT INTO students (id, name, age, city, marks)
+VALUES (?, ?, ?, ?, ?)
+""", student_records)
+
+connection.commit()
+
+print("Records inserted successfully!")
+
+
+# ============================================================
+# PART 8: SELECT QUERY
+# ============================================================
+
+print("\n========== PART 8: SELECT ==========")
+
+cursor.execute("SELECT * FROM students")
+
+results = cursor.fetchall()
+
+for row in results:
+    print(row)
+
+
+# ============================================================
+# PART 9: WHERE CONDITION
+# ============================================================
+
+print("\n========== PART 9: WHERE ==========")
+
+cursor.execute("""
+SELECT *
+FROM students
+WHERE city = ?
+""", ("Karachi",))
+
+results = cursor.fetchall()
+
+print("Students from Karachi:")
+
+for row in results:
+    print(row)
+
+
+# ============================================================
+# PART 10: ORDER BY
+# ============================================================
+
+print("\n========== PART 10: ORDER BY ==========")
+
+cursor.execute("""
+SELECT name, marks
+FROM students
+ORDER BY marks DESC
+""")
+
+results = cursor.fetchall()
+
+print("Students sorted by highest marks:")
+
+for row in results:
+    print(row)
+
+
+# ============================================================
+# PART 11: AGGREGATE FUNCTIONS
+# ============================================================
+
+print("\n========== PART 11: AGGREGATE FUNCTIONS ==========")
+
+# COUNT
+
+cursor.execute("SELECT COUNT(*) FROM students")
+print("Total Students:", cursor.fetchone()[0])
+
+# AVG
+
+cursor.execute("SELECT AVG(marks) FROM students")
+print("Average Marks:", cursor.fetchone()[0])
+
+# MAX
+
+cursor.execute("SELECT MAX(marks) FROM students")
+print("Highest Marks:", cursor.fetchone()[0])
+
+# MIN
+
+cursor.execute("SELECT MIN(marks) FROM students")
+print("Lowest Marks:", cursor.fetchone()[0])
+
+# SUM
+
+cursor.execute("SELECT SUM(marks) FROM students")
+print("Total Marks:", cursor.fetchone()[0])
+
+
+# ============================================================
+# PART 12: GROUP BY
+# ============================================================
+
+print("\n========== PART 12: GROUP BY ==========")
+
+cursor.execute("""
+SELECT city, COUNT(*)
+FROM students
+GROUP BY city
+""")
+
+results = cursor.fetchall()
+
+for row in results:
+    print(row)
+
+
+# ============================================================
+# PART 13: SQL DATA TO PANDAS DATAFRAME
+# ============================================================
+
+print("\n========== PART 13: SQL TO PANDAS ==========")
+
+query = "SELECT * FROM students"
+
+sql_df = pd.read_sql_query(query, connection)
+
+print(sql_df)
+
+
+# ============================================================
+# PART 14: FILTER DATA USING SQL
+# ============================================================
+
+print("\n========== PART 14: FILTERED DATA ==========")
+
+query = """
+SELECT name, city, marks
+FROM students
+WHERE marks > ?
+ORDER BY marks DESC
+"""
+
+filtered_df = pd.read_sql_query(
+    query,
+    connection,
+    params=(80,)
+)
+
+print(filtered_df)
+
+
+# ============================================================
+# PART 15: JSON NESTED DATA
+# ============================================================
+
+print("\n========== PART 15: NESTED JSON ==========")
+
+nested_data = [
+    {
+        "name": "Ayesha",
+        "address": {
+            "city": "Karachi",
+            "country": "Pakistan"
+        }
+    },
+    {
+        "name": "Sara",
+        "address": {
+            "city": "Lahore",
+            "country": "Pakistan"
+        }
+    }
+]
+
+nested_df = pd.json_normalize(nested_data)
+
+print(nested_df)
+
+
+# ============================================================
+# PART 16: READING JSON FROM AN API
+# ============================================================
+
+print("\n========== PART 16: API JSON ==========")
+
+# Install requests first:
+# python -m pip install requests
+
+# Uncomment to try this section.
+#
+# import requests
+#
+# url = "https://jsonplaceholder.typicode.com/users"
+#
+# response = requests.get(url, timeout=20)
+# response.raise_for_status()
+#
+# api_data = response.json()
+#
+# api_df = pd.json_normalize(api_data)
+#
+# print(api_df.head())
+
+
+# ============================================================
+# PART 17: CLOSE DATABASE CONNECTION
+# ============================================================
+
+connection.close()
+
+print("\nDatabase connection closed successfully!")
+
+print("\n========== DAY 16 COMPLETED ==========")
+
+
+# ============================================================
+# EXTRA PRACTICE TASKS
+# ============================================================
+
+# 1. Add another student to the students list.
+#
+# 2. Display students whose marks are greater than 80.
+#
+# 3. Find students from Lahore.
+#
+# 4. Sort students by age.
+#
+# 5. Calculate average marks.
+#
+# 6. Find the student with the highest marks.
+#
+# 7. Create another SQL table called courses.
+#
+# 8. Read a different JSON file using Pandas.
+#
+# 9. Try reading data from a public API.
+#
+# 10. Convert an API response into a DataFrame.
+```
