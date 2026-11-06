@@ -1,134 +1,53 @@
-# Day 17: Fetching Data From an API
+# Day 18: Fetching Data Using Web Scraping
 
-## 1. What is an API?
+## 1. What is Web Scraping?
 
-API stands for **Application Programming Interface**.
+Web scraping is the process of automatically collecting information from websites using code.
 
-An API allows two different software applications to communicate and exchange data with each other.
+We use web scraping when the required data is available on a website but there is no API available to access it.
 
 ### Simple Example
 
-Imagine you book a railway ticket through different platforms:
+Suppose we want to collect information about different companies:
 
-- IRCTC website
-- MakeMyTrip
-- Yatra
+- Company name
+- Company rating
+- Number of reviews
+- Headquarters
+- Company age
+- Number of employees
+- Company type
+- Company description
 
-All these platforms can show train and seat availability.
+Instead of visiting every company page and copying the information manually, we can write a Python program to collect it automatically.
 
-But the railway database belongs to IRCTC. How can another platform access this information?
-
-Through an **API**.
-
-IRCTC provides an API that allows authorized applications to request information. The API returns the requested data.
-
-### Simple Definition
-
-An API is a way for two software applications to communicate and share information.
-
-Think of an API as a bridge between two applications.
+**Simple Definition:** Web scraping means extracting useful information from website pages using a program.
 
 ---
 
-## 2. How Does an API Work?
+## 2. API vs Web Scraping
 
-The basic API communication process has four steps:
+| API | Web Scraping |
+|---|---|
+| Gets data through an API endpoint | Extracts data from website HTML |
+| Usually returns structured data like JSON | Usually starts with HTML |
+| Uses libraries like Requests | Uses Requests and BeautifulSoup |
+| Often easier to work with | Requires understanding HTML structure |
+| Requires API access or permission | Requires permission to access and collect website content |
 
-1. A client sends a request to an API.
-2. The API processes the request.
-3. The server sends a response.
-4. The client receives and uses the response.
-
-### Example
-
-Suppose we want to get information about movies.
-
-- Our Python program sends a request.
-- The movie API receives the request.
-- The API gets movie information from its database.
-- The API returns the data in JSON format.
-- Python converts that data into a Pandas DataFrame.
-
-### API Workflow
-
-Python Program → API Request → Server → API Response → JSON Data → Pandas DataFrame
+**Important:** If a website provides an API, prefer using the API. Web scraping is useful when an API is unavailable and website access is permitted.
 
 ---
 
-## 3. What is an API Request?
+## 3. Python Libraries Used for Web Scraping
 
-An API request is a message sent from one application to another to ask for information or perform an action.
-
-For example, we can request:
-
-- Movie information
-- Weather information
-- User details
-- Product information
-- Stock prices
-
-An API usually provides an endpoint (URL) where we send our request.
-
-### Example Endpoint
-
-`https://api.themoviedb.org/3/movie/top_rated`
-
-This endpoint provides information about top-rated movies.
-
-An API may also require an API key for authentication.
-
----
-
-## 4. What is an API Key?
-
-An API key is a unique value used by an API provider to identify and authorize an application.
-
-Some APIs require an API key before allowing access to their data.
-
-For example, TMDB requires authentication to access its movie data.
-
-**Important:** Never upload your private API key to GitHub. Store it in an environment variable or a `.env` file.
-
----
-
-## 5. What is JSON in API Responses?
-
-Most APIs return data in JSON format.
-
-JSON stands for **JavaScript Object Notation**.
-
-It stores information using key-value pairs, similar to a Python dictionary.
-
-Example:
-
-```json
-{
-    "id": 101,
-    "title": "Example Movie",
-    "release_date": "2025-01-10",
-    "vote_average": 8.5
-}
-```
-
-In Python, we can convert an API response into JSON using:
-
-```python
-response.json()
-```
-
-The returned JSON data can be handled like Python dictionaries and lists.
-
----
-
-## 6. Important Python Libraries
-
-We will use two main libraries.
+We will use three main libraries.
 
 ### A. Requests
 
-The `requests` library is used to send HTTP requests to APIs.
+Requests is used to send HTTP requests and download webpage content.
 
-Install it:
+Install:
 
 ```bash
 pip install requests
@@ -139,393 +58,701 @@ Example:
 ```python
 import requests
 
-url = "https://api.example.com/data"
+url = "https://example.com"
 
-response = requests.get(url)
+response = requests.get(url, timeout=15)
 
 print(response.status_code)
+print(response.text)
 ```
 
-### B. Pandas
+- `requests.get()` sends a GET request.
+- `response.status_code` returns the HTTP status code.
+- `response.text` contains the webpage HTML.
 
-Pandas is used to organize and analyze data in DataFrame format.
+### B. BeautifulSoup
 
-Install it:
+BeautifulSoup is a Python library used to parse HTML and extract information from it.
+
+Install:
+
+```bash
+pip install beautifulsoup4
+```
+
+Import:
+
+```python
+from bs4 import BeautifulSoup
+```
+
+### C. Pandas
+
+Pandas is used to organize extracted information into a DataFrame and save it as a CSV file.
+
+Install:
 
 ```bash
 pip install pandas
 ```
 
-Example:
+Import:
 
 ```python
 import pandas as pd
-
-data = [
-    {"name": "Ali", "age": 22},
-    {"name": "Sara", "age": 24}
-]
-
-df = pd.DataFrame(data)
-
-print(df)
 ```
 
 ---
 
-## 7. Understanding API Responses
+## 4. Understanding HTTP Status Codes
 
-When we send a request, the server returns a response.
-
-We should check its status code to understand whether the request was successful.
+When we send a request to a website, the server returns a status code.
 
 | Status Code | Meaning |
 |---|---|
 | 200 | Request successful |
-| 201 | Resource created |
-| 400 | Bad request |
-| 401 | Unauthorized |
-| 403 | Forbidden |
-| 404 | Resource not found |
+| 301 | Page permanently redirected |
+| 302 | Temporary redirect |
+| 403 | Access forbidden |
+| 404 | Page not found |
 | 429 | Too many requests |
 | 500 | Internal server error |
+
+### What is 403 Forbidden?
+
+A `403` status code means the server understood the request but refused access.
+
+A website may restrict automated requests or require authorization.
+
+**Important:** Do not try to bypass access restrictions. Check the website's terms, permissions and available access methods instead.
+
+---
+
+## 5. What is HTML?
+
+HTML stands for **HyperText Markup Language**.
+
+It is used to create the structure of web pages.
+
+HTML contains different elements called tags.
+
+Common HTML tags:
+
+| HTML Tag | Purpose |
+|---|---|
+| `<html>` | Main HTML document |
+| `<head>` | Page information |
+| `<body>` | Visible webpage content |
+| `<h1>` | Main heading |
+| `<p>` | Paragraph |
+| `<div>` | Container for other elements |
+| `<span>` | Inline content |
+| `<a>` | Link |
+| `<img>` | Image |
+| `<ul>` | Unordered list |
+| `<li>` | List item |
+
+### Example HTML
+
+```html
+<div class="company-card">
+    <h2>Example Company</h2>
+    <p class="rating">4.5</p>
+    <p class="reviews">1200 Reviews</p>
+</div>
+```
+
+In this example:
+
+- `div` is a container.
+- `class="company-card"` identifies the container.
+- `h2` contains the company name.
+- `p` contains the rating and reviews.
+
+Understanding HTML is important because BeautifulSoup uses HTML tags, classes and other attributes to locate information.
+
+---
+
+## 6. What is BeautifulSoup?
+
+BeautifulSoup converts HTML into a structure that Python can search and navigate.
 
 Example:
 
 ```python
-response = requests.get(url)
+from bs4 import BeautifulSoup
 
-if response.status_code == 200:
-    print("Request successful")
-else:
-    print("Something went wrong")
+html = """
+<div class="company-card">
+    <h2>Example Company</h2>
+    <p class="rating">4.5</p>
+</div>
+"""
+
+soup = BeautifulSoup(html, "html.parser")
+
+print(soup.prettify())
 ```
 
-We can also use:
+### What is `html.parser`?
 
-```python
-response.raise_for_status()
-```
+It is Python's built-in HTML parser.
 
-It raises an error if the response contains an unsuccessful HTTP status code.
+It helps BeautifulSoup understand the HTML structure.
+
+### What is `prettify()`?
+
+`prettify()` formats HTML with indentation and line breaks.
+
+It makes the HTML easier to read.
 
 ---
 
-## 8. Converting API Data into a Pandas DataFrame
+## 7. Understanding find() and find_all()
 
-After receiving JSON data, we can convert it into a DataFrame.
+These are two important BeautifulSoup methods.
 
-Example JSON-like Python data:
+### A. find()
 
-```python
-data = [
-    {"name": "Ali", "age": 22},
-    {"name": "Sara", "age": 24},
-    {"name": "Ahmed", "age": 21}
-]
-```
+`find()` returns the first matching element.
 
-Convert it:
+Example:
 
 ```python
-df = pd.DataFrame(data)
+company = soup.find("h2")
 
-print(df)
+print(company.text)
 ```
 
 Output:
 
-| | name | age |
-|---|---|---|
-| 0 | Ali | 22 |
-| 1 | Sara | 24 |
-| 2 | Ahmed | 21 |
-
-Now we can use Pandas functions:
-
-```python
-df.head()
-df.shape
-df.info()
-df.columns
-df.describe()
+```text
+Example Company
 ```
 
----
+### B. find_all()
 
-## 9. Practical Project: Fetching Movie Data From TMDB API
+`find_all()` returns all matching elements in a list.
 
-In this lesson, we use the **TMDB (The Movie Database) API** to create our own movie dataset.
-
-### Step 1: Create a TMDB Account
-
-1. Visit https://www.themoviedb.org/
-2. Create an account or log in.
-3. Open your account settings.
-4. Find the API section.
-5. Apply for API access and obtain your API key.
-
-Keep your API key private.
-
-### Step 2: Select the API Endpoint
-
-We will use the top-rated movies endpoint:
-
-`https://api.themoviedb.org/3/movie/top_rated`
-
-It returns information about top-rated movies.
-
-### Step 3: Send an API Request
-
-We use `requests.get()` to send a request.
+Example:
 
 ```python
-response = requests.get(url, params=params)
+companies = soup.find_all("h2")
+
+for company in companies:
+    print(company.text)
 ```
 
-The API returns a response containing movie information.
+### Difference
 
-### Step 4: Convert the Response into JSON
-
-```python
-data = response.json()
-```
-
-The response contains information such as:
-
-- page
-- results
-- total_pages
-- total_results
-
-The `results` key contains a list of movie dictionaries.
-
-### Step 5: Understand the Movie Data
-
-Each movie contains several fields.
-
-| Field | Description |
+| find() | find_all() |
 |---|---|
-| id | Unique movie ID |
-| title | Movie title |
-| release_date | Movie release date |
-| overview | Movie description |
-| popularity | Popularity score |
-| vote_average | Average rating |
-| vote_count | Number of votes |
+| Returns the first matching element | Returns all matching elements |
+| Returns one element or None | Returns a list |
+| Useful for one value | Useful for multiple values |
 
-We select only the columns that we need.
-
-### Step 6: Convert Movie Data into a DataFrame
+Example:
 
 ```python
-df = pd.DataFrame(data["results"])
+soup.find("p", class_="rating")
 ```
 
-We can select specific columns:
+Finds the first paragraph with the class `rating`.
 
 ```python
-df = df[
-    [
-        "id",
-        "title",
-        "release_date",
-        "overview",
-        "popularity",
-        "vote_average",
-        "vote_count"
-    ]
-]
+soup.find_all("p", class_="rating")
 ```
 
-Now our movie information is organized in a DataFrame.
+Finds all paragraphs with the class `rating`.
+
+**Important:** In BeautifulSoup, use `class_` instead of `class` because `class` is a reserved keyword in Python.
 
 ---
 
-## 10. What is API Pagination?
+## 8. How to Inspect a Website's HTML
 
-Sometimes an API returns data in multiple pages instead of returning everything at once.
+Before extracting data, we need to understand where the information is stored in the HTML.
 
-This is called **pagination**.
+### Step 1: Open the Website
+
+Visit the webpage you are allowed to inspect.
+
+### Step 2: Open Developer Tools
+
+Right-click the information you want to extract and select **Inspect**.
+
+You can also press:
+
+```text
+F12
+```
+
+### Step 3: Find the HTML Element
+
+The browser highlights the HTML element responsible for displaying the selected information.
+
+For example, if you want a company rating, inspect the rating displayed on the webpage.
+
+You may find something like:
+
+```html
+<p class="rating">4.5</p>
+```
+
+### Step 4: Identify the Tag and Class
+
+In this example:
+
+- Tag: `p`
+- Class: `rating`
+- Text: `4.5`
+
+Now we can use BeautifulSoup to extract it.
+
+```python
+rating = soup.find("p", class_="rating")
+
+if rating:
+    print(rating.get_text(strip=True))
+```
+
+**Important:** Class names are not universal. They depend on the website and can change over time.
+
+---
+
+## 9. Extracting Text From HTML
+
+BeautifulSoup provides different ways to extract text.
+
+### A. `.text`
+
+Returns the text inside an element.
+
+```python
+name = soup.find("h2")
+
+print(name.text)
+```
+
+### B. `.get_text()`
+
+Extracts text from an element.
+
+```python
+print(name.get_text())
+```
+
+### C. `.get_text(strip=True)`
+
+Extracts text and removes unnecessary spaces around it.
+
+```python
+print(name.get_text(strip=True))
+```
+
+### D. `.get()`
+
+Extracts an HTML attribute.
+
+Example:
+
+```html
+<a href="https://example.com">Visit Website</a>
+```
+
+Python:
+
+```python
+link = soup.find("a")
+
+print(link.get("href"))
+```
+
+Output:
+
+```text
+https://example.com
+```
+
+---
+
+## 10. Why Do We Need to Extract a Parent Container First?
+
+Imagine a webpage contains 100 company cards.
+
+Each company card contains:
+
+- Company name
+- Rating
+- Reviews
+- Company type
+- Headquarters
+- Company age
+- Employees
+- Tags
+- Description
+
+If we extract every rating separately and every company name separately, it can become difficult to match the correct information.
+
+For example, one company may have four fields and another may have only three.
+
+This can create incorrect data when combining separate lists.
+
+### Better Approach: Extract Each Company Container
+
+First, identify the parent container that holds all the information for one company.
+
+Example:
+
+```html
+<div class="company-card">
+
+    <h2>Example Company</h2>
+
+    <p class="rating">4.5</p>
+
+    <p class="reviews">1200 Reviews</p>
+
+    <p class="company-type">Public</p>
+
+</div>
+```
+
+Now we can extract each company's information separately.
+
+```python
+companies = soup.find_all("div", class_="company-card")
+
+for company in companies:
+
+    name = company.find("h2")
+    rating = company.find("p", class_="rating")
+    reviews = company.find("p", class_="reviews")
+```
+
+This approach keeps each company's information together.
+
+**Remember:** First find the parent container, then extract the child elements inside it.
+
+---
+
+## 11. Understanding Nested HTML Elements
+
+Sometimes information is stored inside multiple HTML elements.
+
+Example:
+
+```html
+<div class="company-card">
+
+    <div class="company-info">
+
+        <h2>Example Company</h2>
+
+        <div class="rating-section">
+            <p class="rating">4.5</p>
+        </div>
+
+    </div>
+
+</div>
+```
+
+Here, the rating is inside two nested containers.
+
+We can navigate through them:
+
+```python
+company = soup.find("div", class_="company-card")
+
+company_info = company.find("div", class_="company-info")
+
+rating_section = company_info.find(
+    "div",
+    class_="rating-section"
+)
+
+rating = rating_section.find("p", class_="rating")
+
+print(rating.get_text(strip=True))
+```
+
+You can also search directly inside the parent:
+
+```python
+rating = company.find("p", class_="rating")
+```
+
+This is often simpler.
+
+---
+
+## 12. Extracting Multiple Companies
+
+Suppose the webpage contains several company containers.
+
+We can use `find_all()` to collect them.
+
+```python
+company_cards = soup.find_all(
+    "div",
+    class_="company-card"
+)
+
+company_data = []
+
+for card in company_cards:
+
+    name = card.find("h2")
+    rating = card.find("p", class_="rating")
+    reviews = card.find("p", class_="reviews")
+
+    company_data.append({
+        "Company Name": name.get_text(strip=True) if name else None,
+        "Rating": rating.get_text(strip=True) if rating else None,
+        "Reviews": reviews.get_text(strip=True) if reviews else None
+    })
+```
+
+Now we have a list of dictionaries.
+
+Each dictionary represents one company.
+
+---
+
+## 13. Handling Missing Information
+
+Not every company has all the information.
+
+For example, one company may not display its company age.
+
+If we directly call `.get_text()` on a missing element, Python will produce an error.
+
+Incorrect:
+
+```python
+age = card.find("p", class_="company-age").get_text()
+```
+
+If the element does not exist, this causes an error.
+
+Correct:
+
+```python
+age_element = card.find("p", class_="company-age")
+
+age = age_element.get_text(strip=True) if age_element else None
+```
+
+This checks whether the element exists before extracting its text.
+
+We can use the same technique for all optional fields.
+
+---
+
+## 14. Extracting Company Information
+
+In the lesson, the goal is to collect information such as:
+
+| Column | Information |
+|---|---|
+| Company Name | Name of the company |
+| Rating | Company's rating |
+| Reviews | Number of reviews |
+| Company Type | Public or private |
+| Headquarters | Main company location |
+| Company Age | How old the company is |
+| Employees | Number of employees |
+| Tags | Related company categories |
+| Description | About the company |
+
+The exact HTML tags and classes must be identified using the browser's Inspect tool.
+
+For example, the transcript demonstrates inspecting a parent container with a class similar to `company-contact-wrapper`.
+
+Do not assume that the same class names will work on every website.
+
+---
+
+## 15. What is Pagination in Web Scraping?
+
+Some websites divide their information into multiple pages.
 
 For example:
 
-- Page 1 contains 20 movies.
-- Page 2 contains the next 20 movies.
-- Page 3 contains another 20 movies.
+- Page 1 contains companies 1–10.
+- Page 2 contains companies 11–20.
+- Page 3 contains companies 21–30.
 
-We can request different pages by passing a page number.
+This is called pagination.
+
+To collect data from multiple pages, we can use a loop.
 
 Example:
 
 ```python
-params = {
-    "api_key": API_KEY,
-    "page": 1
-}
+for page in range(1, 4):
+
+    url = f"https://example.com/companies?page={page}"
+
+    response = requests.get(url)
+
+    # Parse the webpage
+    # Extract company information
 ```
 
-To fetch the next page:
+The exact URL pattern depends on the website.
 
-```python
-params = {
-    "api_key": API_KEY,
-    "page": 2
-}
-```
-
-### Why Do We Need Pagination?
-
-Fetching a large amount of data in one request can be difficult or inefficient.
-
-Pagination allows us to collect data in smaller parts.
-
-### Using a Loop
-
-Instead of sending requests manually, we can use a loop:
-
-```python
-for page in range(1, total_pages + 1):
-    # Fetch data from each page
-    pass
-```
-
-For each page:
-
-1. Send an API request.
-2. Receive the JSON response.
-3. Extract the movie results.
-4. Convert them into a temporary DataFrame.
-5. Add the data to the main DataFrame.
-
-The final DataFrame contains movies collected from all requested pages.
-
-**Important:** Do not assume the total number of pages will always be the same. Read `total_pages` from the API response.
+Always inspect how the page URL changes when you click Next.
 
 ---
 
-## 11. Combining Multiple DataFrames
+## 16. Combining Data From Multiple Pages
 
-We can combine multiple DataFrames using:
+We can store each page's company information in a DataFrame.
 
-```python
-pd.concat()
-```
-
-Example:
+Then combine all DataFrames using:
 
 ```python
-df1 = pd.DataFrame([
-    {"name": "Ali", "age": 22}
-])
-
-df2 = pd.DataFrame([
-    {"name": "Sara", "age": 24}
-])
-
 final_df = pd.concat(
-    [df1, df2],
+    all_dataframes,
     ignore_index=True
 )
-
-print(final_df)
 ```
 
-`ignore_index=True` creates a fresh index for the combined DataFrame.
-
-This is useful when we fetch data page by page.
+`ignore_index=True` creates a fresh index after combining the DataFrames.
 
 ---
 
-## 12. Exporting the Dataset to CSV
+## 17. Exporting Scraped Data to CSV
 
-After collecting the data, we can save it as a CSV file.
+After collecting the information, we can save it.
 
 ```python
-df.to_csv("movies.csv", index=False)
+final_df.to_csv(
+    "companies.csv",
+    index=False
+)
 ```
 
-### What does `index=False` mean?
+Now we have a CSV file containing company information.
 
-It prevents Pandas from saving the DataFrame index as an extra column.
-
-Now we have our own movie dataset in CSV format.
-
-We can use this dataset for:
+This dataset can be used for:
 
 - Data analysis
+- Data cleaning
 - Data visualization
 - Machine Learning projects
-- Recommendation systems
-- Portfolio projects
 
 ---
 
-## 13. Why is Fetching API Data Important in Machine Learning?
+## 18. Important Web Scraping Rules
 
-Machine Learning models need data for training and testing.
+1. Check the website's Terms of Service.
+2. Check its `robots.txt` rules.
+3. Scrape only data you are allowed to access.
+4. Do not bypass login, CAPTCHA, paywalls or access restrictions.
+5. Do not send too many requests in a short time.
+6. Use a reasonable delay between requests.
+7. Handle missing HTML elements.
+8. Check the HTTP status code.
+9. Keep extracted data organized in a DataFrame.
+10. Prefer an official API when available.
 
-Sometimes datasets are not available as ready-made CSV files.
+### What is robots.txt?
 
-APIs allow us to collect data directly from online services.
+`robots.txt` is a file that websites use to communicate crawling rules to automated bots.
 
-Examples:
+Example:
 
-- Weather API → Weather prediction projects
-- Movie API → Movie recommendation systems
-- Sports API → Sports data analysis
-- Financial API → Financial data analysis
-- News API → Text classification projects
+```text
+https://example.com/robots.txt
+```
 
-API data can be collected, cleaned, transformed and then used in Machine Learning.
+It can indicate which website paths crawlers are allowed or disallowed to access.
+
+It is important to remember that robots.txt is not a replacement for the website's Terms of Service or permission requirements.
+
+### What if a Website Uses JavaScript?
+
+Some websites load their information using JavaScript after the initial HTML is downloaded.
+
+In that case, the information may not appear in `response.text`.
+
+You may need an official API or an approved browser automation tool, depending on the website's rules.
 
 ---
 
-## 14. Important Things to Remember
+## 19. API vs Web Scraping vs Machine Learning
 
-1. API stands for Application Programming Interface.
-2. APIs allow different applications to communicate.
-3. Requests is used to send HTTP requests.
-4. `requests.get()` sends a GET request.
-5. `response.status_code` tells us the request status.
-6. `response.json()` converts a JSON response into Python data.
-7. `pd.DataFrame()` converts suitable structured data into a DataFrame.
-8. Pagination helps fetch data from multiple pages.
-9. `pd.concat()` combines multiple DataFrames.
-10. `to_csv()` saves a DataFrame as a CSV file.
-11. API keys should be kept private.
-12. Always check API limits and error responses.
+These topics are connected:
+
+1. API or Web Scraping collects data.
+2. Pandas organizes the collected data.
+3. Data cleaning prepares the data.
+4. Data analysis helps us understand the data.
+5. Machine Learning uses prepared data to train models.
+
+Example:
+
+A company dataset can be collected using web scraping, cleaned using Pandas and used for a suitable prediction or analysis project.
 
 ---
 
-## 15. Practice Questions
+## 20. Important Takeaways
 
-1. What is an API?
-2. Why do applications use APIs?
-3. What is an API endpoint?
-4. What is an API key?
-5. What is the purpose of the Requests library?
-6. What does `response.json()` do?
-7. What is the difference between JSON and a Pandas DataFrame?
-8. What is pagination?
-9. Why do we use `pd.concat()`?
-10. How can we save API data into a CSV file?
+- Web scraping means collecting website data using code.
+- Requests downloads webpage content.
+- BeautifulSoup parses HTML.
+- `find()` extracts the first matching element.
+- `find_all()` extracts all matching elements.
+- `get_text(strip=True)` extracts clean text.
+- `get()` extracts an HTML attribute.
+- `prettify()` makes HTML easier to read.
+- `class_` is used to search by HTML class.
+- Inspect helps us identify HTML tags and classes.
+- Parent containers help keep related information together.
+- Pagination helps collect data from multiple pages.
+- Pandas organizes extracted data.
+- `pd.concat()` combines DataFrames.
+- `to_csv()` saves the final dataset.
 
-## 16. Practice Tasks
+---
 
-- Create a TMDB account and obtain your own API key.
-- Fetch top-rated movies using Python.
-- Display the first five movies.
-- Select the seven movie columns discussed in this lesson.
-- Fetch data from multiple pages.
-- Combine all pages into one DataFrame.
-- Export the final dataset to `movies.csv`.
+## 21. Practice Questions
 
-## 17. Useful Documentation
+1. What is web scraping?
+2. Why do we use web scraping?
+3. What is the difference between an API and web scraping?
+4. What is HTML?
+5. What is BeautifulSoup?
+6. What is the purpose of `requests.get()`?
+7. What is the difference between `find()` and `find_all()`?
+8. Why do we use `class_` instead of `class`?
+9. What does `get_text(strip=True)` do?
+10. Why should we extract a parent container first?
+11. How do we handle missing HTML elements?
+12. What is pagination?
+13. Why do we use `pd.concat()`?
+14. What is the purpose of robots.txt?
+
+## 22. Practice Tasks
+
+- Install Requests, BeautifulSoup and Pandas.
+- Create a small HTML example and parse it.
+- Extract a heading using `find()`.
+- Extract multiple paragraphs using `find_all()`.
+- Extract text using `get_text(strip=True)`.
+- Extract a link using `get("href")`.
+- Create a list of dictionaries from multiple company cards.
+- Convert the list into a DataFrame.
+- Save the DataFrame as `companies.csv`.
+
+## 23. Useful Documentation
 
 - Requests: https://requests.readthedocs.io/
+- BeautifulSoup: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 - Pandas: https://pandas.pydata.org/docs/
-- TMDB API: https://developer.themoviedb.org/docs
-- Python JSON: https://docs.python.org/3/library/json.html
+- HTML: https://developer.mozilla.org/en-US/docs/Web/HTML
 
-**Day 17 Complete — Fetching Data From an API**
+**Day 18 Complete — Fetching Data Using Web Scraping**
