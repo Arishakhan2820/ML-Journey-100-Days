@@ -492,3 +492,7 @@ print("15. RobustScaler")
 # Purchased
 #
 # User ID and Gender are not used in this example.
+
+File name: Day_24_Feature_Scaling_Standardization.py
+
+Dataset: Social_Network_Ads.csv — Python file ke same folder mein rakhna.
